@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dash Donor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnUpdate").click(function () {
+
+                // alert();
+                var email = $("#txtEmail").val();
+
+                var pwdo = $("#txtPasswordold").val();
+                // alert();
+                var pwdn = $("#txtPasswordnew").val();
+                var pwdc = $("#txtPasswordcon").val();
+
+                // alert(email + " " + pwdo+ " "+pwdn+" "+pwnc);
+
+                var obj = {
+                    type: "get",
+                    url: "/donor-setting-data",
+                    data: {
+                        aEmail: email,
+                        apwdo: pwdo,
+                        apwdn: pwdn,
+                        apwdc: pwdc
+                    }
+                }
+
+                /* $.ajax(obj).done(function (resp) {
+                     $("#txtUpdate").html(resp);
+                 }).fail(function (err) {
+                     $("#txtUpdate").html(err);
+                 })*/
+
+                if (pwdo != pwdn && pwdn == pwdc) {
+                    // alert("passowrd Updated");
+                    $.ajax(obj).done(function (resp) {
+                        alert(resp);
+                    }).fail(function (err) {
+                        alert(JSON.stringify(ERR));
+                    })
+                }
+                else if (pwdo == pwdn) {
+                    alert("Old and new password are same");
+                }
+
+                else {
+                    alert("new and confirm password are different");
+                }
+
+            })
+            function setActiveUser() {
+                var au = localStorage.getItem("activekuch");
+                // alert(au);
+                $("#spanWelcome").html(au);
+            }
+            setActiveUser();
+
+            $("#logout").click(function () {
+                localStorage.removeItem("activekuch");
+                location.href = "index.html";
+            })
+
+            function setActiveUser() {
+                if (localStorage.getItem("activekuch") == undefined) {
+                    location.href = "index.html";
+                    return;
+                }
+                var au = localStorage.getItem("activekuch");
+                // alert(au);
+                $("#spanWelcome").html(au);
+                $("#txttxtEmailL").val(au).prop("readonly", true);
+            }
+        })
+    </script>
+</head>
+
+<body style="background-color: blanchedalmond;">
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">HelpRX</span>
+            <button type="button" class="btn btn-outline-primary me-4" id="logout">Logout</button>
+
+        </div>
+    </nav>
+    <h3  class="mt-3 ms-4" >Welcome<span id="spanWelcome">*</span></h3>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+            <center>
+                <p>
+                <h3>Welcome to Donor Dashboard</h3>
+                </p>
+            </center>
+            <div class="card" style="width: 18rem;  float:left;">
+                <img src="pics/profile-icon-png.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">Profile</h5>
+                        <a href="profile-donor.html" class="btn btn-outline-primary" tabindex="-1" role="button"
+                            aria-disabled="true">Open Profile</a>
+                    </center>
+                </div>
+            </div>
+            <div class="card ms-3" style="width: 18rem; float:left;">
+                <img src="pics/medicine avail.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">Available Medicine</h5>
+                        <a href="avail-med.html" class="btn btn-outline-primary" tabindex="-1" role="button"
+                            aria-disabled="true">Avail. Medicine</a>
+                    </center>
+                </div>
+            </div>
+            <div class="card ms-3" style="width: 18rem; float:left;">
+                <img src="pics/medicine manager.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">Medicine Manager</h5>
+                        <a href="medmanager.html" class="btn btn-outline-primary" tabindex="-1" role="button"
+                            aria-disabled="true">Open Med.
+                            Manager</a>
+                    </center>
+                </div>
+            </div>
+            <div class="card ms-3" style="width: 18rem;  float:left;">
+                <img src="pics/settings.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">Settings</h5>
+                        <button class="btn btn-outline-primary ms-3 mx-4" type="button" data-bs-toggle="modal"
+                            data-bs-target="#donor_settings_modal">Open</button>
+                    </center>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <form>
+        <!-- Modal -->
+        <div class="modal fade modal-dialog-center" id="donor_settings_modal" tabindex="-1"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Settings</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="mt-2">
+                        <center>
+                            <h3>Change Password</h3>
+                        </center>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="txtEmail" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="txtEmail" aria-describedby="emailHelp">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="txtPassword" class="form-label"> Old Password</label>
+                                <input type="password" class="form-control" id="txtPasswordold">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="txtPassword" class="form-label"> New Password</label>
+                                <input type="password" class="form-control" id="txtPasswordnew">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="txtPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="txtPasswordcon">
+                            </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                        <div id="txtUpdate">*</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

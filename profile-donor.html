@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="style/profile.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <script>
+        function doPrev(refFile, prevImg) {
+            const [file] = refFile.files
+            if (file) {
+                prevImg.src = URL.createObjectURL(file)
+            }
+        }
+
+        $(document).ready(function () {
+            //doSearch();//calling
+
+            $("#txtEmail").blur(function () {
+                var emailku = $(this).val();
+                var obj = {
+                    type: "get",
+                    url: "/chk-donor-email",
+                    data: {
+                        kuchEmail: emailku
+                    }
+                }
+
+                $.ajax(obj).done(function (respkuch) {
+                    $("#res").html(respkuch);
+                }).fail(function (errKuch) {
+                    $("#res").html(respkuch);
+                })
+
+            });
+            $(document).ajaxStart(function () {
+                $("#wait").css("display", "block");
+            });
+
+            $(document).ajaxStop(function () {
+                $("#wait").css("display", "none");
+            });
+
+            $("#btnSearch").click(function () {
+                var emailKu = $("#txtEmail").val();
+                var obj = {
+                    type: "get",
+                    url: "/get-donor-record",
+                    data: {
+                        kuchEmail: emailKu
+                    }
+                }
+                $.ajax(obj).done(function (respJSONKuch) {
+                    alert(JSON.stringify(respJSONKuch));
+                    //$("#res").html(respkuch);
+                    $("#txtName").val(respJSONKuch[0].name);
+                    $("#txtNumber").val(respJSONKuch[0].contact);
+                    $("#txtAddress").val(respJSONKuch[0].address);
+                    $("#txtCity").val(respJSONKuch[0].city);
+                    $("#txtID").val(respJSONKuch[0].id);
+                    $("#imgPrev").prop("src", "uploads/" + respJSONKuch[0].picname);
+                    $("#hdn").val(respJSONKuch[0].picname);
+
+                    var availhours = respJSONKuch[0].availhours.split("-");
+                    //alert(av);
+                    //var availhours = resp[0].availhours;
+                    //var time = availhours.split("-");
+                    $("#txtFrom").val(availhours[0]);
+                    $("#txtTo").val(availhours[1]);
+
+                }).fail(function (errKuch) {
+                    alert(errKuch);
+                    //$("#res").html(respkuch);
+                })
+
+
+                /*function doSearch() {
+                    var emailKu = $("#txtEmail").val();
+                    var obj = {
+                        type: "get",
+                        url: "/get-donor-record",
+                        data: {
+                            kuchEmail: emailKu
+                        }
+                    }
+
+                    $.ajax(obj).done(function (respJSONKuch) {
+                        alert(JSON.stringify(respJSONKuch));
+                        //$("#res").html(respkuch);
+                        $("#txtName").val(respJSONKuch[0].name);
+                        $("#txtNumber").val(respJSONKuch[0].contact);
+                        $("#txtAddress").val(respJSONKuch[0].address);
+                        $("#txtCity").val(respJSONKuch[0].city);
+                        $("#txtID").val(respJSONKuch[0].id);
+                        $("#imgPrev").prop("src", "uploads/" + respJSONKuch[0].picname);
+                        $("#hdn").val(respJSONKuch[0].picname);
+
+                        var availhours = respJSONKuch[0].availhours.split("-");
+                        //alert(av);
+                        //var availhours = resp[0].availhours;
+                        //var time = availhours.split("-");
+                        $("#txtFrom").val(availhours[0]);
+                        $("#txtTo").val(availhours[1]);
+
+                    }).fail(function (errKuch) {
+                        alert(errKuch);
+                        //$("#res").html(respkuch);
+                    })
+                }*/
+            });
+            function setActiveUser() {
+                var au = localStorage.getItem("activekuch");
+                // alert(au);
+                $("#txtEmail").val(au).prop("readonly", true);
+            }
+            setActiveUser();
+
+        })
+    </script>
+
+    <style>
+        #wait {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">HelpRX</span>
+        </div>
+    </nav>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <center>
+                    <img id="wait" src="pics/icons8-loading-infinity.gif">
+                </center>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+            <input type="hidden" id="hdn" name="hdn">
+            <p>
+                <center>
+                    <h3>Profile Donor Form</h3>
+                </center>
+            </p>
+            <div class="row">
+                <div class="col-md-7">
+                    <label for="inputEmail4" class="form-label">Email Id</label>
+                    <span id="res">*</span>
+                    <input type="email" class="form-control" value="ani@gmail.com88" name="txtEmail" id="txtEmail">
+                </div>
+                <div class="col-md-3 mt-4">
+                    <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label for="inputEmail4" class="form-label">Name</label>
+                <input type="text" class="form-control" value="aniket" name="txtName" id="txtName">
+            </div>
+            <div class="col-md-5">
+                <label for="inputEmail4" class="form-label">Contact Number</label>
+                <input type="text" class="form-control" value="87652243" name="txtNumber" id="txtNumber">
+            </div>
+
+            <div class="col-md-7">
+                <label for="inputAddress" class="form-label">Address</label>
+                <input type="text" class="form-control" value="Bangalore Computer Education" name="txtAddress"
+                    id="txtAddress" placeholder="1234 Main St">
+            </div>
+
+            <div class="col-md-4">
+                <label for="inputState" class="form-label">City</label>
+                <select id="txtCity" class="form-select" name="txtCity">
+                    <option selected>Select</option>
+                    <option value="BTI">Bathinda</option>
+                    <option value="CHD">Chandigarh</option>
+                    <option value="LUD">Ludhiana</option>
+                    <option value="PTL">Patiala</option>
+                    <option value="ARSR">Amritsar</option>
+                </select>
+            </div>
+
+            <div class="col-md-5">
+                <label for="inputState" class="form-label">ID Proof</label>
+                <select id="txtID" class="form-select" name="txtID">
+                    <option selected>Select</option>
+                    <option>Adhar Card</option>
+                    <option>Pan Card</option>
+                    <option>Passport</option>
+                    <option>Driving License</option>
+                    <option>Voter Card</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="inputState" class="form-label">Upload ID Pic</label>
+                <input type="file" onchange="doPrev(this,imgPrev)" name="ppic" accept="image/*">
+            </div>
+            <div class="col-md-4">
+                <img src="" id="imgPrev" alt="" width="100" height="100">
+            </div>
+
+            <div class="col-md-12">
+                <label for="inputState" class="form-label">Availability Hours</label>
+            </div>
+            <div class="col-md-3">
+                <label for="inputState" class="form-label">From</label>
+            </div>
+            <div class="col-md-3">
+                <label for="inputState" class="form-label">To</label>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <select id="txtFrom" class="form-select" name="txtFrom">
+                        <option selected>Select</option>
+                        <option>9am</option>
+                        <option>12am</option>
+                        <option>3pm</option>
+                        <option>6pm</option>
+                        <option>9pm</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="txtTo" class="form-select" name="txtTo">
+                        <option selected>Select</option>
+                        <option>12am</option>
+                        <option>3pm</option>
+                        <option>6pm</option>
+                        <option>9pm</option>
+                        <option>12pm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 mt-5">
+                <center>
+                    <button type="submit" class="btn btn-primary"
+                        formaction="/profile-donor-process-secure">Save</button>
+                    <button type="submit" class="btn btn-primary"
+                        formaction="/profile-donor-update-process-secure">Update</button>
+                </center>
+            </div>
+        </form>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
